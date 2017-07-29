@@ -1,0 +1,43 @@
+<html>
+    <head>
+        <script src="http://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+        <script src="https://unpkg.com/rapid-io/dist/rapid.umd.js"></script>
+        <script>
+        	const client = Rapid.createClient('NDA1OWE0MWo1b3AzY2U1LnJhcGlkLmlv')
+            const luggages = client.collection('luggages')
+            luggages
+                .subscribe(messages => {
+                    console.log(messages)
+                    messages.forEach(message => {
+                        id = message.id
+                        type = message.body.type
+                        $('#luggages').append('<li>' + id + ': ' + type + '</li>')
+                    })
+                })
+
+            luggages
+                .document('abc123')
+                .mutate({
+                    type: 'heavy'
+                })
+                .then(
+                    () => console.log('success'),
+                    err => {
+                        if (err) {
+                            switch (err.type) {
+                                case 'timeout':
+                                case 'permission-denied':
+                                    console.log(err.type)
+                                    break
+                            }
+                        }
+                    }
+                )
+        </script>
+    </head>
+    <body>
+        <div>
+            <ul id="luggages"></ul>
+        </div>
+    </body>
+</html>
