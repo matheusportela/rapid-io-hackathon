@@ -11,22 +11,24 @@
                     console.log(luggages.length)
                     console.log(luggages)
                 })
-            const newDoc = luggages.newDocument('suitcase1') //create new doc
 
 
 
             var total_bags=luggages.lenght; //to count total number of documents (doesn't work)
 
-            
-            function make_bag(num){ //works fine
+            var total_cars = 30; //assume the airport has 30 cars for the simulation
 
+            const car_cap = 10;
+            
+            function make_bag_cin(num){ //works fine
+                //create checked in bags 
                 for(var i = 0; i<  num; i++){
                 luggages
                 .document('suitcase' + i)
                 .mutate({
-                    type: 'fragile',
+                    type: 'fragile',    //we dont use type parameter yet
                     status: 'checked-in',
-                    flight_number: '12345'
+                    flight_number: 1
                 })
                 .then(
                     () => console.log('success'),
@@ -44,14 +46,86 @@
                 }
             }
 
-            make_bag(10);
+            make_bag_cin(20); //make 20 bags
 
-            for(var j = 0; j<luggages.length; j++){ //doesn't work yet some reason
-                console.log(luggages[j]);
+
+
+
+            function make_bag_cout(num){ //works fine
+                //create checked out bags to make sure collection doesn't pat attention to them
+
+                for(var i = 0; i<  num; i++){
+                luggages
+                .document('suitcase' + (i+10))
+                .mutate({
+                    type: 'fragile',
+                    status: 'checked-out',
+                    flight_number: 1
+                })
+                .then(
+                    () => console.log('success'),
+                    err => {
+                        if (err) {
+                            switch (err.type) {
+                                case 'timeout':
+                                case 'permission-denied':
+                                    console.log(err.type)
+                                    break
+                            }
+                        }
+                    }
+                )
+                }
             }
 
+            make_bag_cout(10); //make ten bags
 
+            function car(){
 
+                total_cars--; //use up a car
+                for(var i= 0; i< car_cap; i++){
+                    luggages
+                    .document('suitcase' + i)
+                    .mutate({
+                        status: 'checked-out',
+                        flight_number: '54321'
+                    })
+                    .then(
+                        err => {
+                        if (err) {
+                            switch (err.type) {
+                                case 'timeout':
+                                case 'permission-denied':
+                                    console.log(err.type)
+                                    break
+                            }
+                        }
+                    })
+                }
+
+              
+            }
+
+            // function plane_depart(){
+            //     //deletes all luggages with plane's flight number
+            // }
+
+            // function load_plane(num_cars){
+            //     var payload = num_cars * car_cap;
+
+            //     //need to reassign flight number to current planes's flight number (can generate new number)
+            //     total_cars = total_cars + num_cars; //returns cars back to airport
+
+            //     if(payload >= plane_cap){    //corner case: when payload excees max capacity
+            //         plane_depart();
+            //     }
+            // }
+
+              //car();
+
+              if(luggages.length > 15){ //need bounded waiting and priority queue
+                car();
+              }
 
 
                 // var x = [];
@@ -70,16 +144,7 @@
                 .delete instead of .mutate
                 */
 
-            
-
-     
-
-
   
-            
-                    
-                
-
 
         </script>
     </head>
