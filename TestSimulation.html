@@ -2,13 +2,13 @@
 		<head>
 				<script src="https://unpkg.com/rapid-io/dist/rapid.umd.js"></script>
 				<script>
-				const client = Rapid.createClient('NDA1OWE0MWo1b3AzYW05LnJhcGlkLmlv')
-				const luggage = client.collection('luggage')
-				const departure = client.collection('departure')
-				const vehicle = client.collection('vehicle')
-				const bay1 = luggage.filter({ gate: 1 })
-				const bay2 = luggage.filter({ gate: 2 })
-				const bay3 = luggage.filter({ gate: 3 })
+				const client = Rapid.createClient('NDA1OWE0MWo1b3AzY2U1LnJhcGlkLmlv')
+				const luggages = client.collection('luggages')
+				const flights = client.collection('flights')
+				const carts = client.collection('carts')
+				const bay1 = luggages.filter({ gate: 1 })
+				const bay2 = luggages.filter({ gate: 2 })
+				const bay3 = luggages.filter({ gate: 3 })
 				const numberOfTotalCars = 3;
 
 				var bay1IsBusy = false;
@@ -24,27 +24,17 @@
 				var bagTotal = 0;
 
 				for (var i = 1; i < 4; i++) {
-					vehicle
-							.document('V' + i)
-							.mutate({
-								id: i,
-								status: 'Waiting for Assignment',
-								origin: 'SFO',
-								bags_unloaded: '0'
-							})
-							.then(
-								() => console.log('success'),
-								err => {
-									if (err) {
-										switch (err.type) {
-											case 'timeout':
-											case 'permission-denied':
-													console.log(err.type)
-													break
-										}
-									}
-								}
-							)
+					carts
+						.document('V' + i)
+						.mutate({
+							cartId: i,
+							status: 'Idle',
+							bags_unloaded: 0
+						})
+						.then(
+							() => console.log('success'),
+							err => console.log(err.type)
+						)
 				}
 
 				</script>
@@ -58,9 +48,9 @@
 				</ul>
 				<p id="stats"></p>
 				<ul style="list-style-type:none">
-				<li><p id="bay1"></p></li>
-				<li><p id="bay2"></p></li>
-				<li><p id="bay3"></p></li>
+					<li><p id="bay1"></p></li>
+					<li><p id="bay2"></p></li>
+					<li><p id="bay3"></p></li>
 				</ul>
 			</div>
 				<script>
@@ -94,52 +84,55 @@
 					++numberOfDepartures;
 					numberOfBags = getRandomInt(10, 30);
 					flightId = 'F' + numberOfDepartures;
-					departure
-							.document(flightId)
-							.mutate({
-								id: numberOfDepartures,
-								status: 'Waiting for Cargo',
-								gate: gate,
-								origin: 'SFO',
-								arrival: numberOfDepartures*30
-							})
-							.then(
-								() => console.log('success'),
-								err => console.log(err.type)
-							)
+					flights
+						.document(flightId)
+						.mutate({
+							flightNumber: flightId,
+							gate: gate,
+							items: 0,
+							status: 'waiting',
+							destination: 'SFO',
+							arrival: numberOfDepartures*30
+						})
+						.then(
+							() => console.log('success'),
+							err => console.log(err.type)
+						)
 					createLuggage(flightId, gate, numberOfBags);
 				}
 
 				function createLuggage(flightId, gate, numberOfBags) {
 					for (var i = 0; i < numberOfBags; i++) {
-						luggage
-								.document('L' + ++bagTotal)
-								.mutate({
-									id: bagTotal,
-									status: 'Waiting for Loading',
-									gate: gate,
-									origin: 'SFO',
-								})
-								.then(
-									() => console.log('success'),
-									err => console.log(err.type)
-								)
+						bagTotal++
+						luggageId = 'L' + bagTotal
+						luggages
+							.document(luggageId)
+							.mutate({
+								id: luggageId,
+								status: 'waiting',
+								gate: gate,
+								destination: 'SFO',
+							})
+							.then(
+								() => console.log('success'),
+								err => console.log(err.type)
+							)
 					}
 				}
 
 				function deleteDeparture() {
 					var simulationTarget = 11;
 					for (var i = 1; i <= simulationTarget; i++) {
-							departure
-								.document('F' + i)
-								.delete({ timeout: 10000 })
-								.then(
-									() => console.log('success'),
-									err => console.log(err.type)
-								)
+						flights
+							.document('F' + i)
+							.delete({ timeout: 10000 })
+							.then(
+								() => console.log('success'),
+								err => console.log(err.type)
+							)
 					}
 
-					departure
+					flights
 						.subscribe(messages => {
 							messages.forEach(message => {
 								console.log('Document ID: ' + message.id);
@@ -150,16 +143,16 @@
 				function deleteLuggage() {
 					var simulationTarget = 500;
 					for (var i = 1; i <= simulationTarget; i++) {
-							luggage
-								.document('L' + i)
-								.delete({ timeout: 10000 })
-								.then(
-									() => console.log('success'),
-									err => console.log(err.type)
-								)
+						luggages
+							.document('L' + i)
+							.delete({ timeout: 10000 })
+							.then(
+								() => console.log('success'),
+								err => console.log(err.type)
+							)
 					}
 
-					luggage
+					luggages
 						.subscribe(messages => {
 							messages.forEach(message => {
 								console.log('Document ID: ' + message.id);
@@ -212,74 +205,47 @@
 				}
 
 				function deployCar(primary, secondary, tertiary) {
-					vehicle
-							.document('V1')
-							.merge({
-								status: 'Assigned to gate ' + primary,
-								bags_unloaded: (v1sum += bay1)
-							})
-							.then(
-								() => console.log('success'),
-								err => {
-									if (err) {
-										switch (err.type) {
-											case 'timeout':
-											case 'permission-denied':
-													console.log(err.type)
-													break
-										}
-									}
-								}
-							)
+					carts
+						.document('V1')
+						.merge({
+							status: 'Assigned to gate ' + primary,
+							bags_unloaded: (v1sum += bay1)
+						})
+						.then(
+							() => console.log('success'),
+							err => console.log(err.type)
+						)
 					removeBags(primary);
-					vehicle
-							.document('V2')
-							.merge({
-								status: 'Assigned to gate ' + secondary,
-								bags_unloaded: (v2sum += bay1)
-							})
-							.then(
-								() => console.log('success'),
-								err => {
-									if (err) {
-										switch (err.type) {
-											case 'timeout':
-											case 'permission-denied':
-													console.log(err.type)
-													break
-										}
-									}
-								}
-							)
+					carts
+						.document('V2')
+						.merge({
+							status: 'Assigned to gate ' + secondary,
+							bags_unloaded: (v2sum += bay1)
+						})
+						.then(
+							() => console.log('success'),
+							err => console.log(err.type)
+						)
 					removeBags(secondary);
-					vehicle
-							.document('V3')
-							.merge({
-								status: 'Assigned to gate ' + tertiary,
-								bags_unloaded: (v3sum += bay1)
-							})
-							.then(
-								() => console.log('success'),
-								err => {
-									if (err) {
-										switch (err.type) {
-											case 'timeout':
-											case 'permission-denied':
-													console.log(err.type)
-													break
-										}
-									}
-								}
-							)
+					carts
+						.document('V3')
+						.merge({
+							status: 'Assigned to gate ' + tertiary,
+							bags_unloaded: (v3sum += bay1)
+						})
+						.then(
+							() => console.log('success'),
+							err => console.log(err.type)
+						)
 					removeBags(tertiary);
 				}
 
 				function removeBags(gate) {
-					luggage
+					luggages
 						.filter({gate: gate})
 						.subscribe(messages => {
 							for (var i = 0; i < 10 && i < messages.length; i++) {
-								luggage
+								luggages
 									.document(messages[i].id)
 									.delete({ timeout: 10000 })
 									.then(
@@ -289,26 +255,26 @@
 							}
 						});
 
-						departure
+						flights
 							.filter({ gate: gate })
 							.subscribe(messages => {
 								messages.forEach(message =>
-									departure
+									flights
 										.document(message.id)
 										.delete({ timeout: 10000 })
 								)
 							});
-						// luggage
+						// luggages
 						// 	.filter({gate: gate})
 						// 	.fetch(messages => {
 						// 		if (messages.length == 0) {
 						// 			client
-						// 				.collection('departure')
+						// 				.collection('flights')
 						// 				.filter({gate: gate})
 						// 				.fetch(messages => {
 						// 					console.log(messages)
 						// 					client
-						// 						.collection('departure')
+						// 						.collection('flights')
 						// 						.document(messages[0].id)
 						// 						.delete({ timeout: 10000 })
 						// 						.then(

@@ -502,7 +502,7 @@ class Cart extends React.Component {
   render() {
     return (
       <tr>
-        <td>{this.props.cart.cartID}</td>
+        <td>{this.props.cart.cartId}</td>
         <td>{this.props.cart.status}</td>
       </tr>
     );
@@ -516,13 +516,13 @@ class CartsList extends React.Component {
     this.state = {
       carts: [
         // {
-        //   cartID: 'abc123',
+        //   cartId: 'abc123',
         //   status: 'Going to A1'
         // }, {
-        //   cartID: 'def456',
+        //   cartId: 'def456',
         //   status: 'Going to B2'
         // }, {
-        //   cartID: 'ghi789',
+        //   cartId: 'ghi789',
         //   status: 'Idle'
         // }
       ]
@@ -557,14 +557,14 @@ class CartsList extends React.Component {
 
   addCart(carts, cart) {
     carts.push({
-      cartID: cart.id,
+      cartId: cart.id,
       status: cart.body.status
     })
   }
 
   removeCart(carts, cart) {
     carts.forEach((f, index) => {
-      if (f.cartID.localeCompare(cart.id) === 0) {
+      if (f.cartId.localeCompare(cart.id) === 0) {
         carts.splice(index, 1)
       }
     })
@@ -572,9 +572,9 @@ class CartsList extends React.Component {
 
   updateCart(carts, cart) {
     carts.forEach((f, index) => {
-      if (f.cartID.localeCompare(cart.id) === 0) {
+      if (f.cartId.localeCompare(cart.id) === 0) {
         carts[index] = {
-          cartID: cart.id,
+          cartId: cart.id,
           status: cart.body.status
         }
       }
@@ -602,7 +602,7 @@ class CartsList extends React.Component {
           </thead>
           <tbody>
             {this.state.carts.map((cart) => {
-              return <Cart key={cart.cartID} cart={cart} />;
+              return <Cart key={cart.cartId} cart={cart} />;
             })}
           </tbody>
         </table>
