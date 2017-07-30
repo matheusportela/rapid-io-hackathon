@@ -11,6 +11,7 @@ $ npm install -g create-react-app
 $ npm install semantic-ui-react --save
 $ npm install semantic-ui-css --save
 $ npm install react-responsive --save
+$ npm install rapid-io --save
 ```
 
 ## Execution
