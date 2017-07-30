@@ -28,27 +28,27 @@ class CriticalSituationsList extends React.Component {
     this.luggageConnections = []
     this.state = {
       situations: [
-        {
-          gate: 'A1',
-          flightNumber: '123',
-          items: 0,
-          status: 'Action required'
-        }, {
-          gate: 'B2',
-          flightNumber: '234',
-          items: 0,
-          status: 'Resources allocated'
-        }, {
-          gate: 'C3',
-          flightNumber: '345',
-          items: 0,
-          status: 'Action required'
-        }, {
-          gate: 'D4',
-          flightNumber: '456',
-          items: 0,
-          status: 'Resolved'
-        }
+        // {
+        //   gate: 'A1',
+        //   flightNumber: '123',
+        //   items: 0,
+        //   status: 'Action required'
+        // }, {
+        //   gate: 'B2',
+        //   flightNumber: '234',
+        //   items: 0,
+        //   status: 'Resources allocated'
+        // }, {
+        //   gate: 'C3',
+        //   flightNumber: '345',
+        //   items: 0,
+        //   status: 'Action required'
+        // }, {
+        //   gate: 'D4',
+        //   flightNumber: '456',
+        //   items: 0,
+        //   status: 'Resolved'
+        // }
       ]
     }
   }
@@ -197,31 +197,31 @@ class DeparturesList extends React.Component {
     this.luggageConnections = []
     this.state = {
       flights: [
-        {
-          gate: 'A1',
-          items: 0,
-          destination: 'JFK',
-          flightNumber: 'N141XR',
-          status: 'ok'
-        }, {
-          gate: 'B2',
-          items: 0,
-          destination: 'LAX',
-          flightNumber: 'A418FT',
-          status: 'ok'
-        }, {
-          gate: 'C3',
-          items: 0,
-          destination: 'OAK',
-          flightNumber: 'SW345DR',
-          status: 'critical'
-        }, {
-          gate: 'D4',
-          items: 0,
-          destination: 'SJC',
-          flightNumber: 'PF3043L',
-          status: 'warning'
-        }
+        // {
+        //   gate: 'A1',
+        //   items: 0,
+        //   destination: 'JFK',
+        //   flightNumber: 'N141XR',
+        //   status: 'ok'
+        // }, {
+        //   gate: 'B2',
+        //   items: 0,
+        //   destination: 'LAX',
+        //   flightNumber: 'A418FT',
+        //   status: 'ok'
+        // }, {
+        //   gate: 'C3',
+        //   items: 0,
+        //   destination: 'OAK',
+        //   flightNumber: 'SW345DR',
+        //   status: 'critical'
+        // }, {
+        //   gate: 'D4',
+        //   items: 0,
+        //   destination: 'SJC',
+        //   flightNumber: 'PF3043L',
+        //   status: 'warning'
+        // }
       ]
     }
   }
@@ -351,31 +351,31 @@ class ArrivalsList extends React.Component {
     this.luggageConnections = []
     this.state = {
       flights: [
-        {
-          gate: 'A1',
-          items: 0,
-          destination: 'JFK',
-          flightNumber: 'N141XR',
-          status: 'ok'
-        }, {
-          gate: 'B2',
-          items: 0,
-          destination: 'LAX',
-          flightNumber: 'A418FT',
-          status: 'ok'
-        }, {
-          gate: 'C3',
-          items: 0,
-          destination: 'OAK',
-          flightNumber: 'SW345DR',
-          status: 'critical'
-        }, {
-          gate: 'D4',
-          items: 0,
-          destination: 'SJC',
-          flightNumber: 'PF3043L',
-          status: 'warning'
-        }
+        // {
+        //   gate: 'A1',
+        //   items: 0,
+        //   destination: 'JFK',
+        //   flightNumber: 'N141XR',
+        //   status: 'ok'
+        // }, {
+        //   gate: 'B2',
+        //   items: 0,
+        //   destination: 'LAX',
+        //   flightNumber: 'A418FT',
+        //   status: 'ok'
+        // }, {
+        //   gate: 'C3',
+        //   items: 0,
+        //   destination: 'OAK',
+        //   flightNumber: 'SW345DR',
+        //   status: 'critical'
+        // }, {
+        //   gate: 'D4',
+        //   items: 0,
+        //   destination: 'SJC',
+        //   flightNumber: 'PF3043L',
+        //   status: 'warning'
+        // }
       ]
     }
   }
@@ -515,16 +515,16 @@ class CartsList extends React.Component {
     this.cartConnections = []
     this.state = {
       carts: [
-        {
-          cartID: 'abc123',
-          status: 'Going to A1'
-        }, {
-          cartID: 'def456',
-          status: 'Going to B2'
-        }, {
-          cartID: 'ghi789',
-          status: 'Idle'
-        }
+        // {
+        //   cartID: 'abc123',
+        //   status: 'Going to A1'
+        // }, {
+        //   cartID: 'def456',
+        //   status: 'Going to B2'
+        // }, {
+        //   cartID: 'ghi789',
+        //   status: 'Idle'
+        // }
       ]
     }
   }
