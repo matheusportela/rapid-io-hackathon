@@ -1,3 +1,149 @@
+/* Fonts */
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:300,400,600');
+
+/* Color palette */
+
+:root {
+  --white: #d7d7d7;
+  --pinkish-grey: #cdcdcd;
+  --white-two: #ffffff;
+  --dark: #1c1d2f;
+  --dark-two: #273142;
+  --pale-grey: #f0f0f1;
+}
+
+/* Text styles */
+
+.info-text {
+  font-family: MuseoSans;
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 1.71;
+  text-align: left;
+  color: rgba(0, 0, 0, 0.75);
+}
+
+/* Basic containers */
+
+html {
+  height: 100%;
+}
+
+body {
+  height: 100%;
+  min-width: 320px;
+  background: var(--pale-grey);
+}
+
+.ui.container {
+  width: 100%;
+}
+
+/* Topbar */
+.top-bar {
+  background: var(--dark);
+  height: 70px;
+  font-family: 'Open Sans', sans-serif;
+  color: var(--white-two);
+}
+
+.top-bar .brand {
+  display: inline-block;
+  padding-top: 15px;
+  padding-left: 15px;
+  width: 50%;
+  text-align: left;
+
+  font-size: 24px;
+  font-weight: 300;
+}
+
+.top-bar .airport-name {
+  display: inline-block;
+  padding-top: 25px;
+  padding-right: 20px;
+  width: 50%;
+  text-align: right;
+
+  font-size: 14px;
+  font-weight: 600;
+  opacity: 0.5;
+}
+
+/* Headers */
+
 h1.ui.header {
   text-align: center;
+}
+
+/* Menu */
+
+.menu-column {
+  display: inline-block;
+  float: left;
+  width: 240px;
+  height: 100%;
+  padding-top: 37px;
+  background-color: var(--white);
+}
+
+.menu-column .menu-item {
+  display: block;
+  height: 34px;
+  margin: 22px 28px;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 20px;
+  font-weight: 300;
+  color: var(--dark-two);
+  cursor: pointer;
+}
+
+.menu-column .menu-item .active {
+  opacity: 0.36;
+  background-color: rgba(0, 0, 0, 0.2);
+  font-weight: 600;
+}
+
+/* Content */
+
+.content-column {
+  display: inline-block;
+  float: left;
+  width: calc(100% - 240px);
+}
+
+.card {
+  margin: 26px 34px;
+  padding: 25px 21px;
+  background: var(--white-two);
+}
+
+.card-title {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 24px;
+  font-weight: bold;
+  color: rgba(0, 0, 0, 0.75);
+}
+
+.card table th {
+  padding-top: 22px;
+  padding-bottom: 7px;
+  height: 22px;
+  width: 275px;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: left;
+  color: rgba(0, 0, 0, 0.75);
+}
+
+.card table td {
+  height: 22px;
+  width: 275px;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 300;
+  text-align: left;
+  line-height: 24px;
+  color: rgba(0, 0, 0, 0.75);
 }

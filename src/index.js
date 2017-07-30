@@ -1,8 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
+import { Header, Grid, Icon, Menu, Table } from 'semantic-ui-react'
+import MediaQuery from 'react-responsive';
+import FontAwesome from 'react-fontawesome';
+
 import 'semantic-ui-css/semantic.min.css';
-import { Container, Header, Grid, Icon, Menu, Segment, Table } from 'semantic-ui-react'
+import './index.css';
 
 class Flight extends React.Component {
   getFlightClass(flight) {
@@ -16,12 +19,12 @@ class Flight extends React.Component {
 
   render() {
     return (
-      <Table.Row className={this.getFlightClass(this.props.flight)}>
-        <Table.Cell>{this.props.flight.number}</Table.Cell>
-        <Table.Cell>{this.props.flight.origin}</Table.Cell>
-        <Table.Cell>{this.props.flight.destination}</Table.Cell>
-        <Table.Cell>{this.props.flight.numLuggages}</Table.Cell>
-      </Table.Row>
+      <tr className={this.getFlightClass(this.props.flight)}>
+        <td>{this.props.flight.gate}</td>
+        <td>{this.props.flight.itemsDeparting}</td>
+        <td>{this.props.flight.destination}</td>
+        <td>{this.props.flight.flightNumber}</td>
+      </tr>
     );
   }
 }
@@ -31,28 +34,28 @@ class DeparturesList extends React.Component {
     super();
     this.flights = [
       {
-        number: 'AA1632',
-        origin: 'SFO',
-        destination: 'HOU',
-        numLuggages: 7,
-        status: 'ok'
-      }, {
-        number: 'UD4123',
-        origin: 'SFO',
+        gate: 'A45',
+        itemsDeparting: 131,
         destination: 'JFK',
-        numLuggages: 3,
+        flightNumber: 'N141XR',
         status: 'ok'
       }, {
-        number: 'DT1231',
-        origin: 'ATL',
+        gate: 'B34',
+        itemsDeparting: 120,
         destination: 'LAX',
-        numLuggages: 12,
+        flightNumber: 'A418FT',
+        status: 'ok'
+      }, {
+        gate: 'C23',
+        itemsDeparting: 150,
+        destination: 'OAK',
+        flightNumber: 'SW345DR',
         status: 'critical'
       }, {
-        number: 'AA9234',
-        origin: 'MIA',
-        destination: 'SFO',
-        numLuggages: 9,
+        gate: 'D7',
+        itemsDeparting: 89,
+        destination: 'SJC',
+        flightNumber: 'PF3043L',
         status: 'warning'
       }
     ];
@@ -60,54 +63,134 @@ class DeparturesList extends React.Component {
 
   render() {
     return (
-      <div className='departures-list'>
-        <Header as='h2'>Departures</Header>
-        <Table>
-          <Table.Header>
-            <Table.Row>
-              <Table.HeaderCell>Number</Table.HeaderCell>
-              <Table.HeaderCell>Origin</Table.HeaderCell>
-              <Table.HeaderCell>Destination</Table.HeaderCell>
-              <Table.HeaderCell># Luggages</Table.HeaderCell>
-            </Table.Row>
-          </Table.Header>
-          <Table.Body>
+      <div className='card'>
+        <span className='card-title'>Departing Flights</span>
+        <table>
+          <thead>
+            <tr>
+              <th>Gate number</th>
+              <th>Items departing</th>
+              <th>Destination</th>
+              <th>Flight number</th>
+            </tr>
+          </thead>
+          <tbody>
             {this.flights.map((flight) => {
               return <Flight key={flight.number} flight={flight} />;
             })}
-          </Table.Body>
-        </Table>
+          </tbody>
+        </table>
+      </div>
+    );
+  }
+}
+
+class ArrivalsList extends React.Component {
+  constructor() {
+    super();
+    this.flights = [
+      {
+        gate: 'A45',
+        itemsDeparting: 131,
+        destination: 'JFK',
+        flightNumber: 'N141XR',
+        status: 'ok'
+      }, {
+        gate: 'B34',
+        itemsDeparting: 120,
+        destination: 'LAX',
+        flightNumber: 'A418FT',
+        status: 'ok'
+      }, {
+        gate: 'C23',
+        itemsDeparting: 150,
+        destination: 'OAK',
+        flightNumber: 'SW345DR',
+        status: 'critical'
+      }, {
+        gate: 'D7',
+        itemsDeparting: 89,
+        destination: 'SJC',
+        flightNumber: 'PF3043L',
+        status: 'warning'
+      }
+    ];
+  }
+
+  render() {
+    return (
+      <div className='card'>
+        <span className='card-title'>Incoming Flights</span>
+        <table>
+          <thead>
+            <tr>
+              <th>Gate number</th>
+              <th>Items departing</th>
+              <th>Destination</th>
+              <th>Flight number</th>
+            </tr>
+          </thead>
+          <tbody>
+            {this.flights.map((flight) => {
+              return <Flight key={flight.number} flight={flight} />;
+            })}
+          </tbody>
+        </table>
+      </div>
+    );
+  }
+}
+
+function Dashboard(props) {
+  return (
+    <DeparturesList />
+  )
+}
+
+function TopBar(props) {
+  return (
+    <div className="top-bar">
+      <div className="brand">Rapid Management</div>
+      <div className="airport-name">Houston Airport (HOU)</div>
+    </div>
+  )
+}
+
+class LateralMenu extends React.Component {
+  render() {
+    return (
+      <div className="menu-column">
+        <span className="menu-item active" key="dashboard">
+          <Icon name='tachometer' /> Dashboard
+        </span>
+        <span className="menu-item" key="critical">
+          <Icon name='attention' /> Critical
+        </span>
+        <span className="menu-item" key="departures">
+          <Icon name='takeoff' /> Departures
+        </span>
+        <span className="menu-item" key="arrivals">
+          <Icon name='landing' /> Arrivals
+        </span>
       </div>
     );
   }
 }
 
 class RapidAirport extends React.Component {
-  state = { activeItem: 'dashboard' }
-
-  handleItemClick = (e, { name }) => this.setState({ activeItem: name })
-
   render() {
-    const { activeItem } = this.state
-
     return (
-      <Grid style={{ marginTop: '3em' }}>
-        <Grid.Column width={4}>
-          <Menu fluid vertical secondary>
-            <Menu.Item name='dashboard' active={activeItem === 'dashboard'} onClick={this.handleItemClick} />
-            <Menu.Item name='arrivals' active={activeItem === 'arrivals'} onClick={this.handleItemClick} />
-            <Menu.Item name='departures' active={activeItem === 'departures'} onClick={this.handleItemClick} />
-          </Menu>
-        </Grid.Column>
-
-        <Grid.Column stretched width={12}>
-          <Segment>
-            <Header as='h1'>San Francisco International Airport (SFO)</Header>
+      <div>
+        <TopBar />
+        <div className="columns">
+          <LateralMenu />
+          <div className="content-column">
             <DeparturesList />
-          </Segment>
-        </Grid.Column>
-      </Grid>
-    )
+            <ArrivalsList />
+          </div>
+        </div>
+      </div>
+    );
   }
 }
 
