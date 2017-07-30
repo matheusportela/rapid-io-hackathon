@@ -4,45 +4,37 @@
 				<script>
 						const client = Rapid.createClient('NDA1OWE0MWo1b3AzYW05LnJhcGlkLmlv')
 						const luggage = client.collection('luggage')
-						const simulationTarget = 25;
-						const numberOfBays = 2;
-						const chanceToChange = 9;
-						sumBay1 = 0;
-						sumBay2 = 0;
+						const SFO = luggage.filter({ origin: 'SFO'})
+						const simulationTarget = 50;
+						const numberOfBays = 3;
+						client
+						  .collection('my-todo-list')
+						  .subscribe((luggage, changes) => {
+						    const { added, updated, removed } = changes
+						    // TODO: animate all user interface changes
+						    console.log('All luggage: ', luggage)
+						    console.log('New luggage: ', added)
+						    console.log('Updated luggage: ', updated)
+						    console.log('Removed luggage: ', removed)
+						  })
+
 				</script>
 		</head>
 		<body>
 				<button type="button" onclick="createLuggage()">Generate Luggage</button>
 				<button type="button" onclick="deleteAll()">Delete All Luggage</button>
-				<ul style="list-style-type:none">
-					<li><p>Bags in Bay 1: <div id="bay1">0</div></p></li>
-					<li><p>Bags in Bay 2: <div id="bay2">0</div></p></li>
-				</ul>
+
 				<script>
 						function createLuggage(){
-							currentBayId = 1;
-							chanceModifier = 0;
 							for (sumLuggage = 1; sumLuggage <= simulationTarget; sumLuggage++) {
-								if (Math.floor((Math.random() * 10) + (chanceToChange - chanceModifier)) == 1) {
-									if (currentBayId < numberOfBays) {
-										currentBayId++
-									} else {
-										currentBayId == 1;
-									}
-									if (chanceModifier == chanceToChange) {
-										chanceModifier = 0;
-									}
-								}
-								if (currentBayId == 1) {
-									sumBay1++;
-								} else {
-									sumBay2++;
-								}
+								currentBayId = getRandomInt(1, 3);
 								luggage
-										.document('L' + sumLuggage)
+										.document('L' + sumLuggage + currentBayId + '0000')
 										.mutate({
 											status: 'Waiting for Loading',
-											bay: currentBayId
+											bay: currentBayId,
+											origin: 'SFO',
+											flight: 'RANDOM FLIGHT'
 										})
 										.then(
 											() => console.log('success'),
@@ -57,26 +49,25 @@
 												}
 											}
 										)
-								chanceModifier++;
 							}
-							document.getElementById("bay1").innerHTML = sumBay1;
-							document.getElementById("bay2").innerHTML = sumBay2;
 						}
 
 						function deleteAll() {
 							for (sumLuggage = 1; sumLuggage <= simulationTarget; sumLuggage++) {
-								luggage
-									.document('L' + sumLuggage)
-									.delete({ timeout: 10000 })
-								  .then(
-								    () => console.log('success'),
-								    err => console.log(err.type)
-								  )
+								for (var j = 1; j < 4; j++) {
+									luggage
+										.document('L' + sumLuggage + j + '0000')
+										.delete({ timeout: 10000 })
+									  .then(
+									    () => console.log('success'),
+									    err => console.log(err.type)
+									  )
+								}
 							}
-							sumBay1 = 0;
-							sumBay2 = 0;
-							document.getElementById("bay1").innerHTML = sumBay1;
-							document.getElementById("bay2").innerHTML = sumBay2;
+						}
+
+						function getRandomInt(min, max) {
+    					return Math.floor(Math.random() * (max - min + 1)) + min;
 						}
 				</script>
 		</body>
