@@ -668,16 +668,16 @@ class LateralMenu extends React.Component {
     return (
       <div className="menu-column">
         <span className="menu-item active" key="dashboard">
-          Dashboard
+          <img src={require('./dashboard.png')} /> Dashboard
         </span>
         <span className="menu-item" key="critical">
-          <Icon name='attention' /> Critical
+          <Icon name='attention' style={{opacity: 0.18}} /> Critical
         </span>
         <span className="menu-item" key="departures">
-          Departures
+          <img src={require('./takeoff.png')} /> Departures
         </span>
         <span className="menu-item" key="arrivals">
-          Arrivals
+          <img src={require('./landing.png')} /> Arrivals
         </span>
       </div>
     );
