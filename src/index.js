@@ -117,33 +117,57 @@ class Flight extends React.Component {
 class DeparturesList extends React.Component {
   constructor() {
     super();
-    this.flights = [
-      {
-        gate: 'A1',
-        items: 0,
-        destination: 'JFK',
-        flightNumber: 'N141XR',
-        status: 'ok'
-      }, {
-        gate: 'B2',
-        items: 0,
-        destination: 'LAX',
-        flightNumber: 'A418FT',
-        status: 'ok'
-      }, {
-        gate: 'C3',
-        items: 0,
-        destination: 'OAK',
-        flightNumber: 'SW345DR',
-        status: 'critical'
-      }, {
-        gate: 'D4',
-        items: 0,
-        destination: 'SJC',
-        flightNumber: 'PF3043L',
-        status: 'warning'
-      }
-    ];
+    this.connections = []
+    this.state = {
+      flights: [
+        {
+          gate: 'A1',
+          items: 0,
+          destination: 'JFK',
+          flightNumber: 'N141XR',
+          status: 'ok'
+        }, {
+          gate: 'B2',
+          items: 0,
+          destination: 'LAX',
+          flightNumber: 'A418FT',
+          status: 'ok'
+        }, {
+          gate: 'C3',
+          items: 0,
+          destination: 'OAK',
+          flightNumber: 'SW345DR',
+          status: 'critical'
+        }, {
+          gate: 'D4',
+          items: 0,
+          destination: 'SJC',
+          flightNumber: 'PF3043L',
+          status: 'warning'
+        }
+      ]
+    }
+  }
+
+  componentDidMount() {
+    this.state.flights.forEach((flight, index) => {
+      var connection = client
+        .collection('luggages')
+        .filter({gate: flight.gate})
+        .subscribe((luggages, changes) => {
+          const { added, updated, removed } = changes
+          var flights = this.state.flights
+          flights[index].items += added.length - removed.length;
+          this.setState({flights: flights})
+        })
+      this.connections.push(connection)
+    })
+  }
+
+  componentWillUnmount() {
+    this.connections.forEach(connection => {
+      connection.unsubscribe()
+    })
   }
 
   render() {
@@ -160,7 +184,7 @@ class DeparturesList extends React.Component {
             </tr>
           </thead>
           <tbody>
-            {this.flights.map((flight) => {
+            {this.state.flights.map((flight) => {
               return <Flight key={flight.flightNumber} flight={flight} />;
             })}
           </tbody>
@@ -173,33 +197,57 @@ class DeparturesList extends React.Component {
 class ArrivalsList extends React.Component {
   constructor() {
     super();
-    this.flights = [
-      {
-        gate: 'A1',
-        items: 0,
-        destination: 'JFK',
-        flightNumber: 'N141XR',
-        status: 'ok'
-      }, {
-        gate: 'B2',
-        items: 0,
-        destination: 'LAX',
-        flightNumber: 'A418FT',
-        status: 'ok'
-      }, {
-        gate: 'C3',
-        items: 0,
-        destination: 'OAK',
-        flightNumber: 'SW345DR',
-        status: 'critical'
-      }, {
-        gate: 'D4',
-        items: 0,
-        destination: 'SJC',
-        flightNumber: 'PF3043L',
-        status: 'warning'
-      }
-    ];
+    this.connections = []
+    this.state = {
+      flights: [
+        {
+          gate: 'A1',
+          items: 0,
+          destination: 'JFK',
+          flightNumber: 'N141XR',
+          status: 'ok'
+        }, {
+          gate: 'B2',
+          items: 0,
+          destination: 'LAX',
+          flightNumber: 'A418FT',
+          status: 'ok'
+        }, {
+          gate: 'C3',
+          items: 0,
+          destination: 'OAK',
+          flightNumber: 'SW345DR',
+          status: 'critical'
+        }, {
+          gate: 'D4',
+          items: 0,
+          destination: 'SJC',
+          flightNumber: 'PF3043L',
+          status: 'warning'
+        }
+      ]
+    }
+  }
+
+  componentDidMount() {
+    this.state.flights.forEach((flight, index) => {
+      var connection = client
+        .collection('luggages')
+        .filter({gate: flight.gate})
+        .subscribe((luggages, changes) => {
+          const { added, updated, removed } = changes
+          var flights = this.state.flights
+          flights[index].items += added.length - removed.length;
+          this.setState({flights: flights})
+        })
+      this.connections.push(connection)
+    })
+  }
+
+  componentWillUnmount() {
+    this.connections.forEach(connection => {
+      connection.unsubscribe()
+    })
   }
 
   render() {
@@ -216,7 +264,7 @@ class ArrivalsList extends React.Component {
             </tr>
           </thead>
           <tbody>
-            {this.flights.map((flight) => {
+            {this.state.flights.map((flight) => {
               return <Flight key={flight.flightNumber} flight={flight} />;
             })}
           </tbody>
