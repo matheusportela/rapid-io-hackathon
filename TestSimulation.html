@@ -1,0 +1,163 @@
+<html>
+		<head>
+				<script src="https://unpkg.com/rapid-io/dist/rapid.umd.js"></script>
+				<script>
+				const client = Rapid.createClient('NDA1OWE0MWo1b3AzYW05LnJhcGlkLmlv')
+				const luggage = client.collection('luggage')
+				const departure = client.collection('departure')
+
+				var bay1IsBusy = false;
+				var bay2IsBusy = false;
+				var bay3IsBusy = false;
+
+				var numberOfDepartures = 0;
+				var bagTotal = 0;
+				</script>
+		</head>
+		<body>
+			<div>
+				<ul style="list-style-type:none">
+					<li><button type="button" onclick="start()">Start Simulation</button></li>
+					<li><button type="button" onclick="end()">End Simulation</button></li>
+					<li><button type="button" onclick="deleteAll()">Delete All</button></li>
+				</ul>
+				<p id="stats"></p>
+			</div>
+				<script>
+				function start() {
+					script = setInterval(function(){ checkGate() }, 10000);
+				}
+
+				function checkGate() {
+					if (bay1IsBusy) {
+						if (bay2IsBusy) {
+							if (bay3IsBusy) {
+
+							} else {
+								newDeparture(3);
+								bay3IsBusy = true;
+							}
+						} else {
+							newDeparture(2);
+							bay2IsBusy = true;
+						}
+					} else {
+						newDeparture(1);
+						bay1IsBusy = true;
+					}
+				}
+
+				function newDeparture(gate) {
+					++numberOfDepartures;
+					numberOfBags = getRandomInt(10, 30);
+					flightId = 'F' + numberOfDepartures;
+					departure
+							.document(flightId)
+							.mutate({
+								id: numberOfDepartures,
+								status: 'Waiting for Cargo',
+								gate: gate,
+								origin: 'SFO',
+								arrival: numberOfDepartures*30
+							})
+							.then(
+								() => console.log('success'),
+								err => {
+									if (err) {
+										switch (err.type) {
+											case 'timeout':
+											case 'permission-denied':
+													console.log(err.type)
+													break
+										}
+									}
+								}
+							)
+					createLuggage(flightId, gate, numberOfBags);
+				}
+
+				function createLuggage(flightId, gate, numberOfBags) {
+					for (var i = 0; i < numberOfBags; i++) {
+						luggage
+								.document('L' + ++bagTotal)
+								.mutate({
+									id: bagTotal,
+									status: 'Waiting for Loading',
+									gate: gate,
+									origin: 'SFO',
+								})
+								.then(
+									() => console.log('success'),
+									err => {
+										if (err) {
+											switch (err.type) {
+												case 'timeout':
+												case 'permission-denied':
+														console.log(err.type)
+														break;
+											}
+										}
+									}
+								)
+					}
+				}
+
+				function deleteDeparture() {
+					var simulationTarget = 11;
+					for (var i = 1; i <= simulationTarget; i++) {
+							departure
+								.document('F' + i)
+								.delete({ timeout: 10000 })
+								.then(
+									() => console.log('success'),
+									err => console.log(err.type)
+								)
+					}
+
+					departure
+						.subscribe(messages => {
+							messages.forEach(message => {
+								console.log('Document ID: ' + message.id);
+							});
+						});
+				}
+
+				function deleteLuggage() {
+					var simulationTarget = 100;
+					for (var i = 1; i <= simulationTarget; i++) {
+							luggage
+								.document('L' + i)
+								.delete({ timeout: 10000 })
+								.then(
+									() => console.log('success'),
+									err => console.log(err.type)
+								)
+					}
+
+					luggage
+						.subscribe(messages => {
+							messages.forEach(message => {
+								console.log('Document ID: ' + message.id);
+							});
+						});
+				}
+
+				function deleteAll(){
+					deleteDeparture();
+					deleteLuggage();
+				}
+
+				function getRandomInt(min, max) {
+					return Math.floor(Math.random() * (max - min + 1)) + min;
+				}
+
+				function end() {
+					clearInterval(script);
+					bay1IsBusy = false;
+					bay2IsBusy = false;
+					bay3IsBusy = false;
+					document.getElementById('stats').innerHTML = ('Total Planes: ' + numberOfDepartures + '\nTotal Bags: ' + bagTotal);
+				}
+				</script>
+		</body>
+</html>
