@@ -1,0 +1,88 @@
+<html>
+    <head>
+        <script src="https://unpkg.com/rapid-io/dist/rapid.umd.js"></script>
+        <script>
+            const client = Rapid.createClient('NDA1OWE0MWo1b3AzOTh6LnJhcGlkLmlv')
+            const luggages = client.collection('luggages')
+
+            luggages
+            .filter({status: 'checked-in'}) //subscribe only to luggage that is checked in
+                .subscribe(luggages => {
+                    console.log(luggages.length)
+                    console.log(luggages)
+                })
+            const newDoc = luggages.newDocument('suitcase1') //create new doc
+
+
+
+            var total_bags=luggages.lenght; //to count total number of documents (doesn't work)
+
+            
+            function make_bag(num){ //works fine
+
+                for(var i = 0; i<  num; i++){
+                luggages
+                .document('suitcase' + i)
+                .mutate({
+                    type: 'fragile',
+                    status: 'checked-in',
+                    flight_number: '12345'
+                })
+                .then(
+                    () => console.log('success'),
+                    err => {
+                        if (err) {
+                            switch (err.type) {
+                                case 'timeout':
+                                case 'permission-denied':
+                                    console.log(err.type)
+                                    break
+                            }
+                        }
+                    }
+                )
+                }
+            }
+
+            make_bag(10);
+
+            for(var j = 0; j<luggages.length; j++){ //doesn't work yet some reason
+                console.log(luggages[j]);
+            }
+
+
+
+
+
+                // var x = [];
+                // console.log(x.length);
+                // console.log(x.length);
+                // console.log(x.length==x.length);
+                // x =[1,2,3];
+                // console.log(x.length);
+                // console.log(x.length);
+                // console.log(x.length==x.length);
+
+                // if(total_bags > 3){
+                //     console.log('fail');
+                // }
+                /*
+                .delete instead of .mutate
+                */
+
+            
+
+     
+
+
+  
+            
+                    
+                
+
+
+        </script>
+    </head>
+    <body>
+    </body>
+</html>
