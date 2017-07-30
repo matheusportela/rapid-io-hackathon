@@ -1,11 +1,69 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Header, Grid, Icon, Menu, Table } from 'semantic-ui-react'
-import MediaQuery from 'react-responsive';
-import FontAwesome from 'react-fontawesome';
+import { Icon } from 'semantic-ui-react'
+// import FontAwesome from 'react-fontawesome';
 
 import 'semantic-ui-css/semantic.min.css';
 import './index.css';
+
+class Situation extends React.Component {
+  render() {
+    return (
+      <tr>
+        <td>{this.props.situation.gate}</td>
+        <td>{this.props.situation.items}</td>
+        <td>{this.props.situation.status}</td>
+      </tr>
+    );
+  }
+}
+
+class CriticalSituationsList extends React.Component {
+  constructor() {
+    super();
+    this.situations = [
+      {
+        gate: 'A45',
+        items: 131,
+        status: 'Action required'
+      }, {
+        gate: 'B34',
+        items: 120,
+        status: 'Resources allocated'
+      }, {
+        gate: 'C23',
+        items: 150,
+        status: 'Action required'
+      }, {
+        gate: 'D7',
+        items: 89,
+        status: 'Resolved'
+      }
+    ];
+  }
+
+  render() {
+    return (
+      <div className='card situations-card'>
+        <span className='card-title'>Critical situations</span>
+        <table>
+          <thead>
+            <tr>
+              <th>Gate</th>
+              <th>Items</th>
+              <th>Situation status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {this.situations.map((situation) => {
+              return <Situation key={situation.number} situation={situation} />;
+            })}
+          </tbody>
+        </table>
+      </div>
+    );
+  }
+}
 
 class Flight extends React.Component {
   getFlightClass(flight) {
@@ -64,11 +122,11 @@ class DeparturesList extends React.Component {
   render() {
     return (
       <div className='card'>
-        <span className='card-title'>Departing Flights</span>
+        <span className='card-title'>Departing flights</span>
         <table>
           <thead>
             <tr>
-              <th>Gate number</th>
+              <th>Gate</th>
               <th>Items departing</th>
               <th>Destination</th>
               <th>Flight number</th>
@@ -120,11 +178,11 @@ class ArrivalsList extends React.Component {
   render() {
     return (
       <div className='card'>
-        <span className='card-title'>Incoming Flights</span>
+        <span className='card-title'>Incoming flights</span>
         <table>
           <thead>
             <tr>
-              <th>Gate number</th>
+              <th>Gate</th>
               <th>Items departing</th>
               <th>Destination</th>
               <th>Flight number</th>
@@ -141,10 +199,87 @@ class ArrivalsList extends React.Component {
   }
 }
 
-function Dashboard(props) {
-  return (
-    <DeparturesList />
-  )
+class IdleCart extends React.Component {
+  render() {
+    return (
+      <tr>
+        <td>{this.props.cart.carts}</td>
+        <td>{this.props.cart.gate}</td>
+      </tr>
+    );
+  }
+}
+
+class IdleCartsList extends React.Component {
+  constructor() {
+    super();
+    this.carts = [
+      {
+        carts: 22,
+        gate: 'A12'
+      }, {
+        carts: 10,
+        gate: 'B4'
+      }, {
+        carts: 11,
+        gate: 'C9'
+      }
+    ];
+  }
+
+  render() {
+    return (
+      <div className='card carts-card'>
+        <span className='card-title'>Idle carts</span>
+        <table>
+          <thead>
+            <tr>
+              <th>Carts</th>
+              <th>Gate</th>
+            </tr>
+          </thead>
+          <tbody>
+            {this.carts.map((cart) => {
+              return <IdleCart key={cart.number} cart={cart} />;
+            })}
+          </tbody>
+        </table>
+      </div>
+    );
+  }
+}
+
+class AverageLoadingTime extends React.Component {
+  render() {
+    return (
+      <div className='card statistics-card'>
+        <span className='card-title'>Average loading time</span>
+        <span className='card-number'>17:39</span>
+      </div>
+    );
+  }
+}
+
+class AverageDelayTime extends React.Component {
+  render() {
+    return (
+      <div className='card statistics-card'>
+        <span className='card-title'>Average delay time</span>
+        <span className='card-number'>10:22</span>
+      </div>
+    );
+  }
+}
+
+class StatisticsCards extends React.Component {
+  render() {
+    return (
+      <div className='card-stack'>
+        <AverageLoadingTime />
+        <AverageDelayTime />
+      </div>
+    );
+  }
 }
 
 function TopBar(props) {
@@ -180,11 +315,16 @@ class LateralMenu extends React.Component {
 class RapidAirport extends React.Component {
   render() {
     return (
-      <div>
+      <div className="app">
         <TopBar />
         <div className="columns">
           <LateralMenu />
           <div className="content-column">
+            <div className="cards-row">
+              <CriticalSituationsList />
+              <StatisticsCards />
+              <IdleCartsList />
+            </div>
             <DeparturesList />
             <ArrivalsList />
           </div>
