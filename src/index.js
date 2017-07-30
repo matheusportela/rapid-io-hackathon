@@ -498,48 +498,111 @@ class ArrivalsList extends React.Component {
   }
 }
 
-class IdleCart extends React.Component {
+class Cart extends React.Component {
   render() {
     return (
       <tr>
-        <td>{this.props.cart.carts}</td>
-        <td>{this.props.cart.gate}</td>
+        <td>{this.props.cart.cartID}</td>
+        <td>{this.props.cart.status}</td>
       </tr>
     );
   }
 }
 
-class IdleCartsList extends React.Component {
+class CartsList extends React.Component {
   constructor() {
     super();
-    this.carts = [
-      {
-        carts: 1,
-        gate: 'A1'
-      }, {
-        carts: 0,
-        gate: 'B2'
-      }, {
-        carts: 1,
-        gate: 'C3'
+    this.cartConnections = []
+    this.state = {
+      carts: [
+        {
+          cartID: 'abc123',
+          status: 'Going to A1'
+        }, {
+          cartID: 'def456',
+          status: 'Going to B2'
+        }, {
+          cartID: 'ghi789',
+          status: 'Idle'
+        }
+      ]
+    }
+  }
+
+  subscribeToCarts() {
+    var connection = client
+      .collection('carts')
+      .subscribe((_, changes) => {
+        const { added, updated, removed } = changes
+        var carts = this.state.carts
+        added.forEach(cart => {
+          this.addCart(carts, cart)
+        })
+        removed.forEach(cart => {
+          this.removeCart(carts, cart)
+        })
+        updated.forEach(cart => {
+          this.updateCart(carts, cart)
+        })
+        this.setState({carts: carts})
+      })
+    this.cartConnections.push(connection)
+  }
+
+  unsubscribeFromCarts() {
+    this.cartConnections.forEach(connection => {
+      connection.unsubscribe()
+    })
+  }
+
+  addCart(carts, cart) {
+    carts.push({
+      cartID: cart.id,
+      status: cart.body.status
+    })
+  }
+
+  removeCart(carts, cart) {
+    carts.forEach((f, index) => {
+      if (f.cartID.localeCompare(cart.id) === 0) {
+        carts.splice(index, 1)
       }
-    ];
+    })
+  }
+
+  updateCart(carts, cart) {
+    carts.forEach((f, index) => {
+      if (f.cartID.localeCompare(cart.id) === 0) {
+        carts[index] = {
+          cartID: cart.id,
+          status: cart.body.status
+        }
+      }
+    })
+  }
+
+  componentDidMount() {
+    this.subscribeToCarts()
+  }
+
+  componentWillUnmount() {
+    this.unsubscribeFromCarts()
   }
 
   render() {
     return (
       <div className='card carts-card'>
-        <span className='card-title'>Idle carts</span>
+        <span className='card-title'>Carts</span>
         <table>
           <thead>
             <tr>
-              <th>Carts</th>
-              <th>Gate</th>
+              <th>ID</th>
+              <th>Status</th>
             </tr>
           </thead>
           <tbody>
-            {this.carts.map((cart) => {
-              return <IdleCart key={cart.gate} cart={cart} />;
+            {this.state.carts.map((cart) => {
+              return <Cart key={cart.cartID} cart={cart} />;
             })}
           </tbody>
         </table>
@@ -622,7 +685,7 @@ class RapidAirport extends React.Component {
             <div className="cards-row">
               <CriticalSituationsList />
               <StatisticsCards />
-              <IdleCartsList />
+              <CartsList />
             </div>
             <DeparturesList />
             <ArrivalsList />
