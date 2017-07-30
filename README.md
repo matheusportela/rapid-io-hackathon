@@ -10,6 +10,7 @@ This project uses NPM, React and Semantic UI.
 $ npm install -g create-react-app
 $ npm install semantic-ui-react --save
 $ npm install semantic-ui-css --save
+$ npm install react-responsive --save
 ```
 
 ## Execution

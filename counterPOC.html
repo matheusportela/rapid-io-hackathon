@@ -4,25 +4,30 @@
 				<script>
 						const client = Rapid.createClient('NDA1OWE0MWo1b3AzYW05LnJhcGlkLmlv')
 						const luggage = client.collection('luggage')
-						const SFO = luggage.filter({ origin: 'SFO'})
+						const cars = client.collection('cars')
+						const bay1 = luggage.filter({ bay: '1'})
+						const bay2 = luggage.filter({ bay: '2'})
+						const bay3 = luggage.filter({ bay: '3'})
 						const simulationTarget = 50;
 						const numberOfBays = 3;
 						client
 						  .collection('my-todo-list')
 						  .subscribe((luggage, changes) => {
 						    const { added, updated, removed } = changes
-						    // TODO: animate all user interface changes
 						    console.log('All luggage: ', luggage)
 						    console.log('New luggage: ', added)
 						    console.log('Updated luggage: ', updated)
 						    console.log('Removed luggage: ', removed)
 						  })
 
+
 				</script>
 		</head>
 		<body>
 				<button type="button" onclick="createLuggage()">Generate Luggage</button>
 				<button type="button" onclick="deleteAll()">Delete All Luggage</button>
+				<button type="button" onclick="callTruck()">Call Vehicle</button>
+				<form> </form>
 
 				<script>
 						function createLuggage(){
@@ -68,6 +73,13 @@
 
 						function getRandomInt(min, max) {
     					return Math.floor(Math.random() * (max - min + 1)) + min;
+						}
+
+						function callTruck() {
+							bay1
+							.subscribe({
+								console.log(bay1.length)
+							})
 						}
 				</script>
 		</body>
