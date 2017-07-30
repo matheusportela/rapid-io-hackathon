@@ -151,27 +151,25 @@ class DeparturesList extends React.Component {
   }
 
   subscribeToFlights() {
-    this.state.flights.forEach((flight, index) => {
-      var connection = client
-        .collection('flights')
-        .subscribe((flights, changes) => {
-          this.unsubscribeFromLuggages()
+    var connection = client
+      .collection('flights')
+      .subscribe((flights, changes) => {
+        this.unsubscribeFromLuggages()
 
-          const { added, updated, removed } = changes
-          var flights = this.state.flights
-          added.forEach(flight => {
-            this.addFlight(flights, flight)
-          })
-          removed.forEach(flight => {
-            this.removeFlight(flights, flight)
-          })
-          updated.forEach(flight => {
-            this.updateFlight(flights, flight)
-          })
-          this.setState({flights: flights})
-
-          this.subscribeToLuggages()
+        const { added, updated, removed } = changes
+        var flights = this.state.flights
+        added.forEach(flight => {
+          this.addFlight(flights, flight)
         })
+        removed.forEach(flight => {
+          this.removeFlight(flights, flight)
+        })
+        updated.forEach(flight => {
+          this.updateFlight(flights, flight)
+        })
+        this.setState({flights: flights})
+
+        this.subscribeToLuggages()
 
       this.flightConnections.push(connection)
     })
@@ -198,13 +196,13 @@ class DeparturesList extends React.Component {
   updateFlight(flights, flight) {
     flights.forEach((f, index) => {
       if (f.flightNumber.localeCompare(flight.body.flightNumber) === 0) {
-        flights.push({
+        flights[index] = {
           gate: flight.body.gate,
           items: 0,
           destination: flight.body.destination,
           flightNumber: flight.body.flightNumber,
           status: flight.body.status
-        })
+        }
       }
     })
   }
