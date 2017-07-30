@@ -24,23 +24,28 @@ class Situation extends React.Component {
 class CriticalSituationsList extends React.Component {
   constructor() {
     super();
-    this.connections = []
+    this.flightConnections = []
+    this.luggageConnections = []
     this.state = {
       situations: [
         {
           gate: 'A1',
+          flightNumber: '123',
           items: 0,
           status: 'Action required'
         }, {
           gate: 'B2',
+          flightNumber: '234',
           items: 0,
           status: 'Resources allocated'
         }, {
           gate: 'C3',
+          flightNumber: '345',
           items: 0,
           status: 'Action required'
         }, {
           gate: 'D4',
+          flightNumber: '456',
           items: 0,
           status: 'Resolved'
         }
@@ -48,25 +53,96 @@ class CriticalSituationsList extends React.Component {
     }
   }
 
-  componentDidMount() {
-    this.state.situations.forEach((situation, index) => {
+  subscribeToFlights() {
+    var connection = client
+      .collection('flights')
+      .subscribe((flights, changes) => {
+        this.unsubscribeFromLuggages()
+
+        const { added, updated, removed } = changes
+        var situations = this.state.situations
+        added.forEach(flight => {
+          this.addSituation(situations, flight)
+        })
+        updated.forEach(flight => {
+          this.updateSituation(situations, flight)
+        })
+        removed.forEach(flight => {
+          this.removeSituation(situations, flight)
+        })
+        this.setState({situations: situations})
+
+        this.subscribeToLuggages()
+
+      this.flightConnections.push(connection)
+    })
+  }
+
+  addSituation(situations, flight) {
+    situations.push({
+      gate: flight.body.gate,
+      flightNumber: flight.body.flightNumber,
+      items: 0,
+      status: 'OK'
+    })
+  }
+
+  updateSituation(situations, flight) {
+    situations.forEach((f, index) => {
+      if (f.flightNumber.localeCompare(flight.body.flightNumber) === 0) {
+        situations[index] = {
+          gate: flight.body.gate,
+          flightNumber: flight.body.flightNumber,
+          items: 0,
+          status: 'OK'
+        }
+      }
+    })
+  }
+
+  removeSituation(situations, flight) {
+    situations.forEach((f, index) => {
+      if (f.flightNumber.localeCompare(flight.body.flightNumber) === 0) {
+        situations.splice(index, 1)
+      }
+    })
+  }
+
+  unsubscribeFromFlights() {
+    this.flightConnections.forEach(connection => {
+      connection.unsubscribe()
+    })
+  }
+
+  subscribeToLuggages() {
+    this.state.situations.forEach((flight, index) => {
       var connection = client
         .collection('luggages')
-        .filter({gate: situation.gate})
+        .filter({gate: flight.gate})
         .subscribe((luggages, changes) => {
           const { added, updated, removed } = changes
           var situations = this.state.situations
           situations[index].items += added.length - removed.length;
           this.setState({situations: situations})
         })
-      this.connections.push(connection)
+      this.luggageConnections.push(connection)
     })
   }
 
-  componentWillUnmount() {
-    this.connections.forEach(connection => {
+  unsubscribeFromLuggages() {
+    this.luggageConnections.forEach(connection => {
       connection.unsubscribe()
     })
+  }
+
+  componentDidMount() {
+    this.subscribeToFlights()
+    this.subscribeToLuggages()
+  }
+
+  componentWillUnmount() {
+    this.unsubscribeFromFlights()
+    this.unsubscribeFromLuggages()
   }
 
   render() {
@@ -271,7 +347,8 @@ class DeparturesList extends React.Component {
 class ArrivalsList extends React.Component {
   constructor() {
     super();
-    this.connections = []
+    this.flightConnections = []
+    this.luggageConnections = []
     this.state = {
       flights: [
         {
@@ -303,7 +380,70 @@ class ArrivalsList extends React.Component {
     }
   }
 
-  componentDidMount() {
+  subscribeToFlights() {
+    var connection = client
+      .collection('flights')
+      .subscribe((flights, changes) => {
+        this.unsubscribeFromLuggages()
+
+        const { added, updated, removed } = changes
+        var flights = this.state.flights
+        added.forEach(flight => {
+          this.addFlight(flights, flight)
+        })
+        removed.forEach(flight => {
+          this.removeFlight(flights, flight)
+        })
+        updated.forEach(flight => {
+          this.updateFlight(flights, flight)
+        })
+        this.setState({flights: flights})
+
+        this.subscribeToLuggages()
+
+      this.flightConnections.push(connection)
+    })
+  }
+
+  addFlight(flights, flight) {
+    flights.push({
+      gate: flight.body.gate,
+      items: 0,
+      destination: flight.body.destination,
+      flightNumber: flight.body.flightNumber,
+      status: flight.body.status
+    })
+  }
+
+  removeFlight(flights, flight) {
+    flights.forEach((f, index) => {
+      if (f.flightNumber.localeCompare(flight.body.flightNumber) === 0) {
+        flights.splice(index, 1)
+      }
+    })
+  }
+
+  updateFlight(flights, flight) {
+    flights.forEach((f, index) => {
+      if (f.flightNumber.localeCompare(flight.body.flightNumber) === 0) {
+        flights[index] = {
+          gate: flight.body.gate,
+          items: 0,
+          destination: flight.body.destination,
+          flightNumber: flight.body.flightNumber,
+          status: flight.body.status
+        }
+      }
+    })
+  }
+
+  unsubscribeFromFlights() {
+    this.flightConnections.forEach(connection => {
+      connection.unsubscribe()
+    })
+  }
+
+  subscribeToLuggages() {
     this.state.flights.forEach((flight, index) => {
       var connection = client
         .collection('luggages')
@@ -314,14 +454,24 @@ class ArrivalsList extends React.Component {
           flights[index].items += added.length - removed.length;
           this.setState({flights: flights})
         })
-      this.connections.push(connection)
+      this.luggageConnections.push(connection)
     })
   }
 
-  componentWillUnmount() {
-    this.connections.forEach(connection => {
+  unsubscribeFromLuggages() {
+    this.luggageConnections.forEach(connection => {
       connection.unsubscribe()
     })
+  }
+
+  componentDidMount() {
+    this.subscribeToFlights()
+    this.subscribeToLuggages()
+  }
+
+  componentWillUnmount() {
+    this.unsubscribeFromFlights()
+    this.unsubscribeFromLuggages()
   }
 
   render() {
