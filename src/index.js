@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import 'semantic-ui-css/semantic.min.css';
-import { Container, Header, Table } from 'semantic-ui-react'
+import { Container, Header, Grid, Icon, Menu, Segment, Table } from 'semantic-ui-react'
 
 class Flight extends React.Component {
   getFlightClass(flight) {
@@ -82,13 +82,33 @@ class DeparturesList extends React.Component {
   }
 }
 
-function RapidAirport(props) {
-  return (
-    <Container class='main' style={{ marginTop: '3em' }}>
-      <Header as='h1'>San Francisco International Airport (SFO)</Header>
-      <DeparturesList />
-    </Container>
-  )
+class RapidAirport extends React.Component {
+  state = { activeItem: 'dashboard' }
+
+  handleItemClick = (e, { name }) => this.setState({ activeItem: name })
+
+  render() {
+    const { activeItem } = this.state
+
+    return (
+      <Grid style={{ marginTop: '3em' }}>
+        <Grid.Column width={4}>
+          <Menu fluid vertical secondary>
+            <Menu.Item name='dashboard' active={activeItem === 'dashboard'} onClick={this.handleItemClick} />
+            <Menu.Item name='arrivals' active={activeItem === 'arrivals'} onClick={this.handleItemClick} />
+            <Menu.Item name='departures' active={activeItem === 'departures'} onClick={this.handleItemClick} />
+          </Menu>
+        </Grid.Column>
+
+        <Grid.Column stretched width={12}>
+          <Segment>
+            <Header as='h1'>San Francisco International Airport (SFO)</Header>
+            <DeparturesList />
+          </Segment>
+        </Grid.Column>
+      </Grid>
+    )
+  }
 }
 
 ReactDOM.render(
