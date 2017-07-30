@@ -199,24 +199,28 @@ class DeparturesList extends React.Component {
       flights: [
         // {
         //   gate: 'A1',
+        //   type: 'departure',
         //   items: 0,
         //   destination: 'JFK',
         //   flightNumber: 'N141XR',
         //   status: 'ok'
         // }, {
         //   gate: 'B2',
+        //   type: 'departure',
         //   items: 0,
         //   destination: 'LAX',
         //   flightNumber: 'A418FT',
         //   status: 'ok'
         // }, {
         //   gate: 'C3',
+        //   type: 'departure',
         //   items: 0,
         //   destination: 'OAK',
         //   flightNumber: 'SW345DR',
         //   status: 'critical'
         // }, {
         //   gate: 'D4',
+        //   type: 'departure',
         //   items: 0,
         //   destination: 'SJC',
         //   flightNumber: 'PF3043L',
@@ -229,6 +233,7 @@ class DeparturesList extends React.Component {
   subscribeToFlights() {
     var connection = client
       .collection('flights')
+      .filter({type: 'departure'})
       .subscribe((flights, changes) => {
         this.unsubscribeFromLuggages()
 
@@ -353,24 +358,28 @@ class ArrivalsList extends React.Component {
       flights: [
         // {
         //   gate: 'A1',
+        //   type: 'arrival',
         //   items: 0,
         //   destination: 'JFK',
         //   flightNumber: 'N141XR',
         //   status: 'ok'
         // }, {
         //   gate: 'B2',
+        //   type: 'arrival',
         //   items: 0,
         //   destination: 'LAX',
         //   flightNumber: 'A418FT',
         //   status: 'ok'
         // }, {
         //   gate: 'C3',
+        //   type: 'arrival',
         //   items: 0,
         //   destination: 'OAK',
         //   flightNumber: 'SW345DR',
         //   status: 'critical'
         // }, {
         //   gate: 'D4',
+        //   type: 'arrival',
         //   items: 0,
         //   destination: 'SJC',
         //   flightNumber: 'PF3043L',
@@ -383,6 +392,7 @@ class ArrivalsList extends React.Component {
   subscribeToFlights() {
     var connection = client
       .collection('flights')
+      .filter({type: 'arrival'})
       .subscribe((flights, changes) => {
         this.unsubscribeFromLuggages()
 
