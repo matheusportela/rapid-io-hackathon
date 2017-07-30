@@ -112,7 +112,7 @@ h1.ui.header {
   cursor: pointer;
 }
 
-.menu-column .menu-item .active {
+.menu-column .menu-item.active {
   opacity: 0.36;
   background-color: rgba(0, 0, 0, 0.2);
   font-weight: 600;

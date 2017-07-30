@@ -2,9 +2,12 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Icon } from 'semantic-ui-react'
 // import FontAwesome from 'react-fontawesome';
+import rapid from 'rapid-io'
 
 import 'semantic-ui-css/semantic.min.css';
 import './index.css';
+
+const client = rapid.createClient('NDA1OWE0MWo1b3AzY2U1LnJhcGlkLmlv')
 
 class Situation extends React.Component {
   render() {
@@ -21,25 +24,49 @@ class Situation extends React.Component {
 class CriticalSituationsList extends React.Component {
   constructor() {
     super();
-    this.situations = [
-      {
-        gate: 'A45',
-        items: 131,
-        status: 'Action required'
-      }, {
-        gate: 'B34',
-        items: 120,
-        status: 'Resources allocated'
-      }, {
-        gate: 'C23',
-        items: 150,
-        status: 'Action required'
-      }, {
-        gate: 'D7',
-        items: 89,
-        status: 'Resolved'
-      }
-    ];
+    this.connections = []
+    this.state = {
+      situations: [
+        {
+          gate: 'A1',
+          items: 0,
+          status: 'Action required'
+        }, {
+          gate: 'B2',
+          items: 0,
+          status: 'Resources allocated'
+        }, {
+          gate: 'C3',
+          items: 0,
+          status: 'Action required'
+        }, {
+          gate: 'D4',
+          items: 0,
+          status: 'Resolved'
+        }
+      ]
+    }
+  }
+
+  componentDidMount() {
+    this.state.situations.forEach((situation, index) => {
+      var connection = client
+        .collection('luggages')
+        .filter({gate: situation.gate})
+        .subscribe((luggages, changes) => {
+          const { added, updated, removed } = changes
+          var situations = this.state.situations
+          situations[index].items += added.length - removed.length;
+          this.setState({situations: situations})
+        })
+      this.connections.push(connection)
+    })
+  }
+
+  componentWillUnmount() {
+    this.connections.forEach(connection => {
+      connection.unsubscribe()
+    })
   }
 
   render() {
@@ -55,8 +82,8 @@ class CriticalSituationsList extends React.Component {
             </tr>
           </thead>
           <tbody>
-            {this.situations.map((situation) => {
-              return <Situation key={situation.number} situation={situation} />;
+            {this.state.situations.map((situation) => {
+              return <Situation key={situation.gate} situation={situation} />;
             })}
           </tbody>
         </table>
@@ -79,7 +106,7 @@ class Flight extends React.Component {
     return (
       <tr className={this.getFlightClass(this.props.flight)}>
         <td>{this.props.flight.gate}</td>
-        <td>{this.props.flight.itemsDeparting}</td>
+        <td>{this.props.flight.items}</td>
         <td>{this.props.flight.destination}</td>
         <td>{this.props.flight.flightNumber}</td>
       </tr>
@@ -92,26 +119,26 @@ class DeparturesList extends React.Component {
     super();
     this.flights = [
       {
-        gate: 'A45',
-        itemsDeparting: 131,
+        gate: 'A1',
+        items: 0,
         destination: 'JFK',
         flightNumber: 'N141XR',
         status: 'ok'
       }, {
-        gate: 'B34',
-        itemsDeparting: 120,
+        gate: 'B2',
+        items: 0,
         destination: 'LAX',
         flightNumber: 'A418FT',
         status: 'ok'
       }, {
-        gate: 'C23',
-        itemsDeparting: 150,
+        gate: 'C3',
+        items: 0,
         destination: 'OAK',
         flightNumber: 'SW345DR',
         status: 'critical'
       }, {
-        gate: 'D7',
-        itemsDeparting: 89,
+        gate: 'D4',
+        items: 0,
         destination: 'SJC',
         flightNumber: 'PF3043L',
         status: 'warning'
@@ -134,7 +161,7 @@ class DeparturesList extends React.Component {
           </thead>
           <tbody>
             {this.flights.map((flight) => {
-              return <Flight key={flight.number} flight={flight} />;
+              return <Flight key={flight.flightNumber} flight={flight} />;
             })}
           </tbody>
         </table>
@@ -148,26 +175,26 @@ class ArrivalsList extends React.Component {
     super();
     this.flights = [
       {
-        gate: 'A45',
-        itemsDeparting: 131,
+        gate: 'A1',
+        items: 0,
         destination: 'JFK',
         flightNumber: 'N141XR',
         status: 'ok'
       }, {
-        gate: 'B34',
-        itemsDeparting: 120,
+        gate: 'B2',
+        items: 0,
         destination: 'LAX',
         flightNumber: 'A418FT',
         status: 'ok'
       }, {
-        gate: 'C23',
-        itemsDeparting: 150,
+        gate: 'C3',
+        items: 0,
         destination: 'OAK',
         flightNumber: 'SW345DR',
         status: 'critical'
       }, {
-        gate: 'D7',
-        itemsDeparting: 89,
+        gate: 'D4',
+        items: 0,
         destination: 'SJC',
         flightNumber: 'PF3043L',
         status: 'warning'
@@ -190,7 +217,7 @@ class ArrivalsList extends React.Component {
           </thead>
           <tbody>
             {this.flights.map((flight) => {
-              return <Flight key={flight.number} flight={flight} />;
+              return <Flight key={flight.flightNumber} flight={flight} />;
             })}
           </tbody>
         </table>
@@ -215,14 +242,14 @@ class IdleCartsList extends React.Component {
     super();
     this.carts = [
       {
-        carts: 22,
-        gate: 'A12'
+        carts: 1,
+        gate: 'A1'
       }, {
-        carts: 10,
-        gate: 'B4'
+        carts: 0,
+        gate: 'B2'
       }, {
-        carts: 11,
-        gate: 'C9'
+        carts: 1,
+        gate: 'C3'
       }
     ];
   }
@@ -240,7 +267,7 @@ class IdleCartsList extends React.Component {
           </thead>
           <tbody>
             {this.carts.map((cart) => {
-              return <IdleCart key={cart.number} cart={cart} />;
+              return <IdleCart key={cart.gate} cart={cart} />;
             })}
           </tbody>
         </table>
@@ -296,16 +323,16 @@ class LateralMenu extends React.Component {
     return (
       <div className="menu-column">
         <span className="menu-item active" key="dashboard">
-          <Icon name='tachometer' /> Dashboard
+          Dashboard
         </span>
         <span className="menu-item" key="critical">
           <Icon name='attention' /> Critical
         </span>
         <span className="menu-item" key="departures">
-          <Icon name='takeoff' /> Departures
+          Departures
         </span>
         <span className="menu-item" key="arrivals">
-          <Icon name='landing' /> Arrivals
+          Arrivals
         </span>
       </div>
     );

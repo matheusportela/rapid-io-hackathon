@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "gulp": "^3.9.1",
+    "rapid-io": "^0.4.2",
     "react": "^15.6.1",
     "react-burger-menu": "^2.1.4",
     "react-dom": "^15.6.1",
