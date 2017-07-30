@@ -1,0 +1,74 @@
+<html>
+		<head>
+				<script src="https://unpkg.com/rapid-io/dist/rapid.umd.js"></script>
+				<script>
+						const client = Rapid.createClient('NDA1OWE0MWo1b3AzYW05LnJhcGlkLmlv')
+						const luggage = client.collection('luggage')
+						const SFO = luggage.filter({ origin: 'SFO'})
+						const simulationTarget = 50;
+						const numberOfBays = 3;
+						client
+						  .collection('my-todo-list')
+						  .subscribe((luggage, changes) => {
+						    const { added, updated, removed } = changes
+						    // TODO: animate all user interface changes
+						    console.log('All luggage: ', luggage)
+						    console.log('New luggage: ', added)
+						    console.log('Updated luggage: ', updated)
+						    console.log('Removed luggage: ', removed)
+						  })
+
+				</script>
+		</head>
+		<body>
+				<button type="button" onclick="createLuggage()">Generate Luggage</button>
+				<button type="button" onclick="deleteAll()">Delete All Luggage</button>
+
+				<script>
+						function createLuggage(){
+							for (sumLuggage = 1; sumLuggage <= simulationTarget; sumLuggage++) {
+								currentBayId = getRandomInt(1, 3);
+								luggage
+										.document('L' + sumLuggage + currentBayId + '0000')
+										.mutate({
+											status: 'Waiting for Loading',
+											bay: currentBayId,
+											origin: 'SFO',
+											flight: 'RANDOM FLIGHT'
+										})
+										.then(
+											() => console.log('success'),
+											err => {
+												if (err) {
+													switch (err.type) {
+														case 'timeout':
+														case 'permission-denied':
+																console.log(err.type)
+																break
+													}
+												}
+											}
+										)
+							}
+						}
+
+						function deleteAll() {
+							for (sumLuggage = 1; sumLuggage <= simulationTarget; sumLuggage++) {
+								for (var j = 1; j < 4; j++) {
+									luggage
+										.document('L' + sumLuggage + j + '0000')
+										.delete({ timeout: 10000 })
+									  .then(
+									    () => console.log('success'),
+									    err => console.log(err.type)
+									  )
+								}
+							}
+						}
+
+						function getRandomInt(min, max) {
+    					return Math.floor(Math.random() * (max - min + 1)) + min;
+						}
+				</script>
+		</body>
+</html>
